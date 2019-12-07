@@ -12,8 +12,21 @@ _Z7set_bitPcmi:
         ## rsi offset
         ## rdx value (edx en fait, c'est un int!)
 
+        push r8
+        push r10
 
-        ## votre fonction ici
+        mov rcx, rsi
+        mov r8b, 1
+        shl r8b, cl
+        not r8b
+        and byte ptr [rdi], r8b
+
+        mov r10b, dl
+        shl r10b, cl
+        or byte ptr [rdi], r10b
+
+        pop r10
+        pop r8
 
         ret
 
