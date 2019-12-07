@@ -47,7 +47,7 @@ _Z7get_bitPKcm:
 
         push rcx
 
-        mov al, byte ptr [rdi]
+        movzx rax, byte ptr [rdi]
         mov rcx, rsi
         shr al, cl
         and al, 1
