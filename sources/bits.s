@@ -14,6 +14,7 @@ _Z7set_bitPcmi:
 
         push r8
         push r10
+        push rcx
 
         mov rcx, rsi
         mov r8b, 1
@@ -25,6 +26,7 @@ _Z7set_bitPcmi:
         shl r10b, cl
         or byte ptr [rdi], r10b
 
+        pop rcx
         pop r10
         pop r8
 
@@ -42,9 +44,15 @@ _Z7get_bitPKcm:
 
         ## rdi ptr
         ## rsi offset
-        
 
-        ## votre fonction ici
+        push rcx
+
+        mov al, byte ptr [rdi]
+        mov rcx, rsi
+        shr al, cl
+        and al, 1
+
+        pop rcx
         
         ret                     # retour implicite dans eax
 
