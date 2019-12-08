@@ -29,95 +29,114 @@ _Z12eratosthenesPcmPFvmE:
 
         push rdx
 
-        mov r8, 1 # bit counter
+        mov r8, 2 # bit counter
 
-        push rdi
-        xor rdi, rdi
-        mov rdi, rsi
-        push r8
-        call _Z8int_sqrtm
-        pop r8
-        pop rdi
-        mov r9, rax # number of bytes
+        #push rdi
+        #push rsi
+        #xor rdi, rdi
+        #mov rdi, rsi
+        #push r8
+        #call _Z8int_sqrtm
+        #pop r8
+        #pop rsi
+        #pop rdi
+        mov r9, rsi # number of bytes
 
 main_loop:
 
-        push r8
+        # Check if all bits were checked
         cmp r8, r9
         je end
-        pop r8
 
         # divide
-        push rcx
-        mov rax, r8
-        mov rdx, 0 # div in 64bit is made by rdx:rax / register
-        mov rcx, 8 # the divisor
-        div rcx
-        pop rcx
-
-
-        push rdi
-        push rsi
-
-        add rdi, rax
-        mov rsi, rdx
-
-        call _Z7get_bitPKcm
-
-        pop rsi
-        pop rdi
-
-        cmp rax, 1
-        je main_loop
-
+                push rcx
+                mov rax, r8
+                mov rdx, 0 # div in 64bit is made by rdx:rax / register
+                mov rcx, 8 # the divisor
+                div rcx
+                pop rcx
 
         push rdi
-        push r8
-        add r8, 1
-        mov rdi, r8
-        call r15
-        pop r8
-        pop rdi
+                push rsi
 
-        push r10
+                add rdi, rax
+                mov rsi, rdx
 
-        mov r10, r8 # x is r10
+                call _Z7get_bitPKcm
 
-sub_loop:
+                pop rsi
+                pop rdi
 
-        cmp r10, r9
-        je sub_end
-
-        # divide
-        push rcx
-        mov rax, r10
-        mov rdx, 0 # div in 64bit is made by rdx:rax / register
-        mov rcx, 8 # the divisor
-        div rcx
-        pop rcx
-
+                inc r8
+                cmp rax, 1
+                        je main_loop
+                dec r8
         push rdi
-        push rsi
-        push rdx
+                push r8
+                push r9
+                push r10
+                mov rdi, r8
+                call r15
+                pop r10
+                pop r9
+                pop r8
+                pop rdi
 
-        add rdi, rax
-        mov rsi, rdx
-        mov rdx, 1
-        call _Z7set_bitPcmi
-
-        pop rdx
-        pop rsi
-        pop rdi
-
+        mov r10, r8
         inc r10
+
+# set multiples to 1
+sub_loop:
+        cmp r10, r9
+        jge sub_end
+
+
+        # divide
+                push rcx
+                mov rax, r10
+                mov rdx, 0 # div in 64bit is made by rdx:rax / register
+                mov rcx, r8 # the divisor
+                div rcx
+                pop rcx
+
+
+        add r10, 1 # TODO more increment
+
+        cmp rdx, 0
+        jne sub_loop
+
+        # divide
+                push rcx
+                push r10
+                dec r10
+                mov rax, r10
+                mov rdx, 0 # div in 64bit is made by rdx:rax / register
+                mov rcx, 8 # the divisor
+                div rcx
+                pop r10
+                pop rcx
+
+        push rdi
+                push rsi
+                push rdx
+
+                add rdi, rax
+                mov rsi, rdx
+                mov rdx, 1
+                call _Z7set_bitPcmi
+
+                pop rdx
+                pop rsi
+                pop rdi
+
+
+
         jmp sub_loop
-        call r8 # breakpoint
 
 sub_end:
-        pop r10
         inc r8
         jmp main_loop
-        ## votre stuff ici!
+
 end:
         pop rdx
         ret
