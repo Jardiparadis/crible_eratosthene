@@ -15,9 +15,8 @@ _Z12eratosthenesPcmPFvmE:
         ## rdx, callback
 
 
-        mov r15,rdx             # callback
-        mov r14, rsi
-
+        mov r15, rdx            # callback
+        mov r14, rsi            # nb_bits
 
         push rdi                # apparemment cette fonction veut une
                                 # case sur la pile (rdi ne sert aucune
@@ -28,8 +27,7 @@ _Z12eratosthenesPcmPFvmE:
 
 
         ## votre stuff ici!
-        mov r8, 2
-
+        mov r8, 2               # compteur
 
 main_loop:
 
@@ -54,7 +52,7 @@ main_loop:
         je increment
 
         cmp r8, 2
-        je oupsi
+        je not_print
 
         push rdi
         push r8
@@ -62,24 +60,14 @@ main_loop:
         call r15
         pop r8
         pop rdi
-oupsi:
+not_print:
         mov r9, r8
-        inc r9
-
+	add r9, r8
+	
 biffle_loop:
 
         cmp r9, r14
         jg increment
-
-        push rcx
-        mov rax, r9
-        mov rdx, 0 # div in 64bit is made by rdx:rax / register
-        mov rcx, r8 # the divisor
-        div rcx
-        pop rcx
-
-        cmp rdx, 0 # alors biffle
-        jne increment_biffle
 
         push rcx
         mov rax, r9
@@ -97,7 +85,7 @@ biffle_loop:
         pop rdi
 
 increment_biffle:
-        inc r9
+	add r9, r8
         jmp biffle_loop
 
 increment:
