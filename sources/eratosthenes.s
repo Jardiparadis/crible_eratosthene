@@ -37,7 +37,6 @@ _Z12eratosthenesPcmPFvmE:
         mov r8, 2               # compteur
 
 main_loop:
-
         cmp r8, r13
         jg end_main_loop
 
@@ -56,10 +55,10 @@ main_loop:
         pop rdi
 
         cmp rax, 1
-        je increment
+        je increment_main_loop
 
         cmp r8, 2
-        je not_print
+        je pass_print
 
         push rdi
         push r8
@@ -67,14 +66,14 @@ main_loop:
         call r15
         pop r8
         pop rdi
-not_print:
+
+pass_print:
         mov r9, r8
 	    add r9, r8
 	
-biffle_loop:
-
+mark_multiples_loop:
         cmp r9, r14
-        jg increment
+        jg increment_main_loop
 
         push rcx
         mov rax, r9
@@ -91,16 +90,15 @@ biffle_loop:
         call _Z7set_bitPcmi
         pop rdi
 
-increment_biffle:
 	    add r9, r8
-        jmp biffle_loop
+        jmp mark_multiples_loop
 
-increment:
+increment_main_loop:
         inc r8
         jmp main_loop
 
 end_main_loop:
-oui_loop:
+print_remaining_primes_loop:
         cmp r8, r14
         je true_ending
 
@@ -119,18 +117,18 @@ oui_loop:
         pop rdi
 
         cmp rax, 1
-        je inco
+        je increment_print_remaining_primes_loop
 
-mark:
         push rdi
         push r8
         mov rdi, r8
         call r15
         pop r8
         pop rdi
-inco:
+
+increment_print_remaining_primes_loop:
         inc r8
-        jmp oui_loop
+        jmp print_remaining_primes_loop
 
 true_ending:
         ret
