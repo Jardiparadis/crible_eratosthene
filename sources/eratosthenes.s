@@ -38,6 +38,7 @@ main_loop:
 
         push rcx
         mov rax, r8
+        dec rax
         mov rdx, 0 # div in 64bit is made by rdx:rax / register
         mov rcx, 8 # the divisor
         div rcx
@@ -45,7 +46,6 @@ main_loop:
 
         push rdi
         add rdi, rax
-        dec rdi
         mov rsi, rdx
         call _Z7get_bitPKcm
         pop rdi
@@ -53,13 +53,16 @@ main_loop:
         cmp rax, 1
         je increment
 
+        cmp r8, 2
+        je oupsi
+
         push rdi
         push r8
         mov rdi, r8
         call r15
         pop r8
         pop rdi
-
+oupsi:
         mov r9, r8
         inc r9
 
@@ -80,6 +83,7 @@ biffle_loop:
 
         push rcx
         mov rax, r9
+        dec rax
         mov rdx, 0 # div in 64bit is made by rdx:rax / register
         mov rcx, 8 # the divisor
         div rcx
@@ -87,7 +91,6 @@ biffle_loop:
 
         push rdi
         add rdi, rax
-        dec rdi
         mov rsi, rdx
         mov rdx, 1
         call _Z7set_bitPcmi
