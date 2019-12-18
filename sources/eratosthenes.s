@@ -16,129 +16,92 @@ _Z12eratosthenesPcmPFvmE:
 
 
         mov r15,rdx             # callback
+        mov r14, rsi
 
-        
-        #push rdi                # apparemment cette fonction veut une
+
+        push rdi                # apparemment cette fonction veut une
                                 # case sur la pile (rdi ne sert aucune
                                 # fonction ici)
-        #mov rdi,2               # cas special 2
-        #call r15
-        #pop rdi                 # case sur la pile
+        mov rdi,2               # cas special 2
+        call r15
+        pop rdi                 # case sur la pile
 
-        ////
 
-        push rdx
+        ## votre stuff ici!
+        mov r8, 2
 
-        mov r8, 2 # bit counter
-
-        #push rdi
-        #push rsi
-        #xor rdi, rdi
-        #mov rdi, rsi
-        #push r8
-        #call _Z8int_sqrtm
-        #pop r8
-        #pop rsi
-        #pop rdi
-        mov r9, rsi # number of bytes
 
 main_loop:
 
-        # Check if all bits were checked
-        cmp r8, r9
-        je end
+        cmp r8, r14
+        jg end_main_loop
 
-        # divide
-                push rcx
-                mov rax, r8
-                mov rdx, 0 # div in 64bit is made by rdx:rax / register
-                mov rcx, 8 # the divisor
-                div rcx
-                pop rcx
+        push rcx
+        mov rax, r8
+        mov rdx, 0 # div in 64bit is made by rdx:rax / register
+        mov rcx, 8 # the divisor
+        div rcx
+        pop rcx
 
         push rdi
-                push rsi
+        add rdi, rax
+        dec rdi
+        mov rsi, rdx
+        call _Z7get_bitPKcm
+        pop rdi
 
-                add rdi, rax
-                mov rsi, rdx
-
-                call _Z7get_bitPKcm
-
-                pop rsi
-                pop rdi
-
-                inc r8
-                cmp rax, 1
-                        je main_loop
-                dec r8
-        push rdi
-                push r8
-                push r9
-                push r10
-                mov rdi, r8
-                call r15
-                pop r10
-                pop r9
-                pop r8
-                pop rdi
-
-        mov r10, r8
-        inc r10
-
-# set multiples to 1
-sub_loop:
-        cmp r10, r9
-        jge sub_end
-
-
-        # divide
-                push rcx
-                mov rax, r10
-                mov rdx, 0 # div in 64bit is made by rdx:rax / register
-                mov rcx, r8 # the divisor
-                div rcx
-                pop rcx
-
-
-        add r10, 1 # TODO more increment
-
-        cmp rdx, 0
-        jne sub_loop
-
-        # divide
-                push rcx
-                push r10
-                dec r10
-                mov rax, r10
-                mov rdx, 0 # div in 64bit is made by rdx:rax / register
-                mov rcx, 8 # the divisor
-                div rcx
-                pop r10
-                pop rcx
+        cmp rax, 1
+        je increment
 
         push rdi
-                push rsi
-                push rdx
+        push r8
+        mov rdi, r8
+        call r15
+        pop r8
+        pop rdi
 
-                add rdi, rax
-                mov rsi, rdx
-                mov rdx, 1
-                call _Z7set_bitPcmi
+        mov r9, r8
+        inc r9
 
-                pop rdx
-                pop rsi
-                pop rdi
+biffle_loop:
 
+        cmp r9, r14
+        jg increment
 
+        push rcx
+        mov rax, r9
+        mov rdx, 0 # div in 64bit is made by rdx:rax / register
+        mov rcx, r8 # the divisor
+        div rcx
+        pop rcx
 
-        jmp sub_loop
+        cmp rdx, 0 # alors biffle
+        jne increment_biffle
 
-sub_end:
+        push rcx
+        mov rax, r9
+        mov rdx, 0 # div in 64bit is made by rdx:rax / register
+        mov rcx, 8 # the divisor
+        div rcx
+        pop rcx
+
+        push rdi
+        add rdi, rax
+        dec rdi
+        mov rsi, rdx
+        mov rdx, 1
+        call _Z7set_bitPcmi
+        pop rdi
+
+increment_biffle:
+        inc r9
+        jmp biffle_loop
+
+increment:
         inc r8
         jmp main_loop
 
-end:
-        pop rdx
+end_main_loop:
         ret
 
         .cfi_endproc
