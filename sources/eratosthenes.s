@@ -18,6 +18,13 @@ _Z12eratosthenesPcmPFvmE:
         mov r15, rdx            # callback
         mov r14, rsi            # nb_bits
 
+        push rdi
+        mov rdi, r14
+        call _Z8int_sqrtm
+        pop rdi
+        mov r13, rax
+
+
         push rdi                # apparemment cette fonction veut une
                                 # case sur la pile (rdi ne sert aucune
                                 # fonction ici)
@@ -31,7 +38,7 @@ _Z12eratosthenesPcmPFvmE:
 
 main_loop:
 
-        cmp r8, r14
+        cmp r8, r13
         jg end_main_loop
 
         push rcx
@@ -62,7 +69,7 @@ main_loop:
         pop rdi
 not_print:
         mov r9, r8
-	add r9, r8
+	    add r9, r8
 	
 biffle_loop:
 
@@ -85,7 +92,7 @@ biffle_loop:
         pop rdi
 
 increment_biffle:
-	add r9, r8
+	    add r9, r8
         jmp biffle_loop
 
 increment:
@@ -93,6 +100,39 @@ increment:
         jmp main_loop
 
 end_main_loop:
+oui_loop:
+        cmp r8, r14
+        je true_ending
+
+        push rcx
+        mov rax, r8
+        dec rax
+        mov rdx, 0 # div in 64bit is made by rdx:rax / register
+        mov rcx, 8 # the divisor
+        div rcx
+        pop rcx
+
+        push rdi
+        add rdi, rax
+        mov rsi, rdx
+        call _Z7get_bitPKcm
+        pop rdi
+
+        cmp rax, 1
+        je inco
+
+mark:
+        push rdi
+        push r8
+        mov rdi, r8
+        call r15
+        pop r8
+        pop rdi
+inco:
+        inc r8
+        jmp oui_loop
+
+true_ending:
         ret
 
         .cfi_endproc
